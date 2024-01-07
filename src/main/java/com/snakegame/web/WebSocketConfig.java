@@ -1,6 +1,7 @@
 package com.snakegame.web;
 
 import com.snakegame.utils.GameState;
+import org.json.JSONObject;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -32,6 +33,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/snake-game").withSockJS();
         registry.addEndpoint("/topic/gamestate").withSockJS();
+        registry.addEndpoint("/move").withSockJS();
     }
 
     @Override
@@ -42,8 +44,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 // Handle new session
                 String sessionId = message.getHeaders().get("simpSessionId").toString();
                 sessions.put(sessionId, "connected");
-                System.out.println("New session: " + sessionId);
-                gameState.addPlayer("Name","Id",160,90);
 
                 return message;
             }

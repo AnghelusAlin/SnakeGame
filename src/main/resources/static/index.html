@@ -188,9 +188,9 @@
             drawGrid(playerData);
 
             setTimeout(function () {
-                sendMessage(userName);
-            }, 100);
-            sendMessage(userName);
+                sendName(userName);
+            }, 1000);
+            sendName(userName);
         } else {
             alert('Please enter a name.');
         }
@@ -255,17 +255,21 @@
 
     function sendMessage(message) {
         if (stompClient && stompClient.connected) {
-            stompClient.send('/snake-game', {}, JSON.stringify({ content: message }));
+            stompClient.send('/app/move', {}, JSON.stringify({ name : userName, content: message }));
         }
     }
-
+    function sendName(message){
+        if (stompClient && stompClient.connected) {
+            stompClient.send('/app/snake-game', {}, JSON.stringify({content: message }));
+        }
+    }
     function onOpen(event) {
         // Handle the WebSocket connection being opened
 
         // Check if the userName is defined
         if (userName) {
             // Send the userName to the server
-            sendMessage(userName);
+            sendName(userName);
         }
     }
 

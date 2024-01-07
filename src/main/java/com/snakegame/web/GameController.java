@@ -2,8 +2,11 @@ package com.snakegame.web;
 
 import com.snakegame.utils.Direction;
 import com.snakegame.utils.GameState;
+import com.snakegame.utils.dtos.DirectionMessage;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
@@ -16,18 +19,32 @@ public class GameController {
     public GameController(GameService gameService) {
         this.gameService = gameService;
     }
-    @MessageMapping("/update-game")
-    public void updateGameState(String gameStateJson) {
-        // Update game logic...
 
+    @MessageMapping("/snake-game")
+    public void addPlayer(String payload) {
+        // Update game logic...
         // After updating the game state, broadcast it to all players
         gameService.broadcastGameState(gameStateJson);
     }
     @MessageMapping("/move") // Endpoint to receive movement commands from players
-    public void movePlayer(Direction direction) {
+    public void movePlayer(String payload) {
+
+        //System.out.println(payload);
+        JSONObject jsonObject = new JSONObject(payload);
+        String name = jsonObject.getString("name");
+        String message = jsonObject.getString("content");
+        Direction dir = switch (message) {
+            case "w" -> Direction.UP;
+            case "a" -> Direction.LEFT;
+            case "s" -> Direction.DOWN;
+            default -> Direction.RIGHT;
+        };
+        gameState.updatePlayerDirection(name, dir);
+        //System.out.println(gameState.serialize());
+        counter = 0;
+        gameState.updateGameState();
+        gameService.broadcastGameState(gameState.serialize());
         // Process the received movement command and update the game state accordingly
         // Fetch the player, update the position, and generate the new game state
-        GameState gameState = new GameState();
-
     }
 }

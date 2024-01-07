@@ -1,7 +1,8 @@
 package com.snakegame.utils;
 
 import lombok.Data;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,23 +10,20 @@ import java.util.List;
 public class Player {
 
     private String name;
-    private String id;
     private List<Position> positions;
     private String color;
     private Direction currentDirection = Direction.RIGHT;
-    Player(String name, String id) {
+    Player(String name) {
         this.name = name;
-        this.id = id;
         this.positions = new ArrayList<>();
         this.color = Colors.values()[(int) (Math.random() * Colors.values().length)].toString();
     }
-    public boolean updatePositions(Direction direction, int gridWidth, int gridHeight) {
+    public boolean updatePositions(int gridWidth, int gridHeight) {
         // Store the current head position
         Position currentHead = positions.get(0);
         Position newHead = new Position(currentHead.getX(), currentHead.getY());
-
         // Move the head in the specified direction
-        switch (direction) {
+        switch (currentDirection) {
             case LEFT:
                 newHead.setX(newHead.getX() - 1);
                 break;
@@ -70,7 +68,6 @@ public class Player {
     public void printPlayer() {
         System.out.println("Player:");
         System.out.println("Name: " + name);
-        System.out.println("ID: " + id);
         System.out.println("Color: " + color);
         System.out.println("Current Direction: " + currentDirection);
         System.out.println("Positions:");
@@ -78,5 +75,20 @@ public class Player {
             System.out.println("  X: " + position.getX() + ", Y: " + position.getY());
         }
         System.out.println("------");
+    }
+    public String serializeToJson() {
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{");
+        jsonBuilder.append("\"name\": \"").append(this.name).append("\",");
+        jsonBuilder.append("\"positions\": [");
+        for (Position pos : this.positions) {
+            jsonBuilder.append("{\"x\": ").append(pos.getX()).append(", \"y\": ").append(pos.getY()).append("},");
+        }
+        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1); // Remove the extra comma
+        jsonBuilder.append("],");
+        jsonBuilder.append("\"color\": \"").append(this.color).append("\"");
+        jsonBuilder.append("}");
+
+        return jsonBuilder.toString();
     }
 }

@@ -108,7 +108,7 @@
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/snake-game', function (message) {
+            stompClient.subscribe('/topic/gamestate', function (message) {
                 var newData = JSON.parse(message.body);
                 if (newData.hasOwnProperty('playerData')) {
                     drawGrid(newData.playerData);
@@ -125,7 +125,6 @@
             // Initialize WebSocket with the name as a query parameter
             userName = name;
             connect();
-
             function connectCallback(){
                 console.log('Connected to WebSocket');
                 stompClient.subscribe('/topic/snake-game', onMessage, function (error){
@@ -136,7 +135,7 @@
                 console.error('Error connecting to WebSocket', error);
             }
             stompClient.connect({}, connectCallback, errorCallback);
-
+            // After connecting, send the user name to the server
             function onMessage(message){
                 try {
                     // Parse the JSON data received from the server
@@ -182,11 +181,14 @@
                     // ... more players
                 ]
             };
-
             // Parse the sample JSON data and draw the grid
             var playerData = sampleData.playerData;
             drawGrid(playerData);
 
+            setTimeout(function () {
+                sendMessage(userName);
+            }, 100);
+            sendMessage(userName);
         } else {
             alert('Please enter a name.');
         }

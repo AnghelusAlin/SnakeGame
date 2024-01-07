@@ -2,12 +2,9 @@ package com.snakegame.web;
 
 import com.snakegame.utils.Direction;
 import com.snakegame.utils.GameState;
-import com.snakegame.utils.dtos.DirectionMessage;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 @Controller

@@ -15,8 +15,6 @@ public class GameState {
 
     public GameState() {
         this.players = new HashMap<>();
-        gridWidth = 160;
-        gridHeight = 90;
     }
     public void addPlayer(String name, int gridWidth, int gridHeight) {
         Player player = new Player(name);
@@ -56,6 +54,14 @@ public class GameState {
     public void updatePlayerDirection(String name, Direction direction) {
         if (players.containsKey(name)) {
             Player player = players.get(name);
+            if(player.getCurrentDirection() == Direction.UP && direction == Direction.DOWN)
+                return;
+            if(player.getCurrentDirection() == Direction.DOWN && direction == Direction.UP)
+                return;
+            if(player.getCurrentDirection() == Direction.LEFT && direction == Direction.RIGHT)
+                return;
+            if(player.getCurrentDirection() == Direction.RIGHT && direction == Direction.LEFT)
+                return;
             player.setCurrentDirection(direction);
             players.put(name, player);
         }

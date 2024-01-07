@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snek</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: white; /* Set background color to black */
+        }
+
+        #namePrompt {
+            text-align: center;
+        }
+
+        #logoImageContainer {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        #logoImage {
+            width: 100%; /* Set the width to 100% to match the width of the name box */
+            max-width: 300px; /* Set a maximum width if needed */
+            display: block;
+        }
+
+        #overlayText {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #4caf50; /* Green color */
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #inputName {
+            font-size: 18px;
+            padding: 5px;
+            font-weight: bold;
+            color: #333;
+            /* Dark gray color */
+            margin-bottom: 10px;
+        }
+
+        #confirmButton {
+            font-size: 20px;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+            /* White text color */
+            background-color: #4caf50;
+            /* Green button color */
+            border: none;
+            border-radius: 5px;
+        }
+
+        #confirmButton:hover {
+            background-color: #45a049;
+            /* Darker green on hover */
+        }
+
+        #canvasContainer {
+            display: none;
+        }
+
+        #gridCanvas {
+            border: 1px solid #333;
+        }
+    </style>
+    <!-- SockJS library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="stomp.js"></script>
+</head>
+
+<body>
+<div id="namePrompt">
+    <div id="logoImageContainer">
+        <img src="snek.jpg" alt="Logo" id="logoImage"/>
+        <div id="overlayText">SNEK</div>
+    </div>
+    <label for="inputName" style="color: #333;">Enter name:</label><br/>
+    <input id="inputName" type="text"/><br/>
+    <button id="confirmButton" onclick="confirmName()">Confirm</button>
+</div>
+
+<div id="canvasContainer">
+    <canvas id="gridCanvas" width="800" height="600"></canvas>
+</div>
+
+
+
+<script type="text/javascript">
+    var stompClient = null;
+    var userName;
+
+    function connect() {
+        var socket = new SockJS('http://192.168.1.131:8080/snake-game');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/snake-game', function (message) {
+                var newData = JSON.parse(message.body);
+                if (newData.hasOwnProperty('playerData')) {
+                    drawGrid(newData.playerData);
+                } else {
+                    console.error('Invalid JSON format. Missing playerData property.');
+                }
+            });
+        });
+    }
+
+    function confirmName() {
+        var name = document.getElementById('inputName').value;
+        if (name.trim() !== '') {
+            // Initialize WebSocket with the name as a query parameter
+            userName = name;
+            connect();
+
+            function connectCallback(){
+                console.log('Connected to WebSocket');
+                stompClient.subscribe('/topic/snake-game', onMessage, function (error){
+                    console.error('Error subscribing to WebSocket topic', error);
+                });
+            }
+            function errorCallback(error){
+                console.error('Error connecting to WebSocket', error);
+            }
+            stompClient.connect({}, connectCallback, errorCallback);
+
+            function onMessage(message){
+                try {
+                    // Parse the JSON data received from the server
+                    var newData = JSON.parse(event.data);
+
+                    // Check if the received data has playerData property
+                    if (newData.hasOwnProperty('playerData')) {
+                        // Update the grid with the new player data
+                        drawGrid(newData.playerData);
+                    } else {
+                        console.error('Invalid JSON format. Missing playerData property.');
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            };
+            // Hide the name prompt after confirming
+            document.getElementById('namePrompt').style.display = 'none';
+            // Show the canvas container
+            document.getElementById('canvasContainer').style.display = 'block';
+            // Set the username for later use
+            userName = name;
+
+            // Draw the grid with 16:9 aspect ratio and white squares separated by black lines
+            // Sample JSON structure with player positions, names, and colors
+            var sampleData = {
+                "playerData": [
+                    {
+                        "name": "Sopo",
+                        "positions": [{"x": 5, "y": 5}, {"x": 6, "y": 5}, {"x": 7, "y": 5}],
+                        "color": "red"
+                    },
+                    {
+                        "name": "Alun",
+                        "positions": [{"x": 10, "y": 15}, {"x": 10, "y": 16}, {"x": 10, "y": 17}],
+                        "color": "blue"
+                    },
+                    {
+                        "name": "Blud",
+                        "positions": [{"x": 22, "y": 45}, {"x": 22, "y": 46}, {"x": 21, "y": 46}],
+                        "color": "green"
+                    }
+                    // ... more players
+                ]
+            };
+
+            // Parse the sample JSON data and draw the grid
+            var playerData = sampleData.playerData;
+            drawGrid(playerData);
+
+        } else {
+            alert('Please enter a name.');
+        }
+    }
+
+    function drawGrid(playerData) {
+        var canvas = document.getElementById('gridCanvas');
+        var context = canvas.getContext('2d');
+
+        var squareSize = 10; // Size of each square
+        var columns = 160; // Number of squares in each row (16:9 aspect ratio)
+        var rows = 90; // Number of squares in each column
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        context.fillStyle = '#fff'; // White color for squares
+        for (var i = 0; i < columns; i++) {
+            for (var j = 0; j < rows; j++) {
+                context.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
+            }
+        }
+
+        context.strokeStyle = '#333'; // Black color for grid lines
+        for (var i = 0; i <= columns; i++) {
+            context.beginPath();
+            context.moveTo(i * squareSize, 0);
+            context.lineTo(i * squareSize, canvas.height);
+            context.stroke();
+        }
+
+        for (var j = 0; j <= rows; j++) {
+            context.beginPath();
+            context.moveTo(0, j * squareSize);
+            context.lineTo(canvas.width, j * squareSize);
+            context.stroke();
+        }
+
+        // Draw players based on their positions
+        context.font = '12px Arial';
+        context.textAlign = 'center';
+        for (var player of playerData) {
+            var positions = player.positions;
+
+            context.fillStyle = player.color; // Set the color for the player
+
+            for (var position of positions) {
+                context.fillRect(position.x * squareSize, position.y * squareSize, squareSize, squareSize);
+            }
+
+            // Draw colored box behind player name
+            context.fillStyle = '#000'; // Black color for box
+            var nameWidth = context.measureText(player.name).width;
+            context.fillRect((positions[0].x * squareSize) - (nameWidth / 2), positions[0].y * squareSize - 20, nameWidth, 20);
+
+            // Display player name with white text
+            context.fillStyle = '#fff'; // White color for text
+            context.fillText(player.name, positions[0].x * squareSize, positions[0].y * squareSize - 5);
+        }
+    }
+
+
+
+    function sendMessage(message) {
+        if (stompClient && stompClient.connected) {
+            stompClient.send('/snake-game', {}, JSON.stringify({ content: message }));
+        }
+    }
+
+    function onOpen(event) {
+        // Handle the WebSocket connection being opened
+
+        // Check if the userName is defined
+        if (userName) {
+            // Send the userName to the server
+            sendMessage(userName);
+        }
+    }
+
+    function onError(event) {
+        alert(event.data);
+    }
+
+    // Event listeners for keypress events
+    document.addEventListener("keydown", function (event) {
+        var key = event.key.toLowerCase();
+        if (key === 'w' || key === 'arrowup') {
+            sendMessage('w');
+        } else if (key === 'a' || key === 'arrowleft') {
+            sendMessage('a');
+        } else if (key === 's' || key === 'arrowdown') {
+            sendMessage('s');
+        } else if (key === 'd' || key === 'arrowright') {
+            sendMessage('d');
+        }
+    });
+</script>
+</body>
+
+</html>

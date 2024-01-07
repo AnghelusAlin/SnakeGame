@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class Player {
+
     private String name;
     private String id;
     private List<Position> positions;
@@ -64,5 +65,18 @@ public class Player {
                 // Check if the position does not collide with itself
                 !positions.contains(position);
                 //TODO Check if the position does not collide with other players
+    }
+
+    public void printPlayer() {
+        System.out.println("Player:");
+        System.out.println("Name: " + name);
+        System.out.println("ID: " + id);
+        System.out.println("Color: " + color);
+        System.out.println("Current Direction: " + currentDirection);
+        System.out.println("Positions:");
+        for (Position position : positions) {
+            System.out.println("  X: " + position.getX() + ", Y: " + position.getY());
+        }
+        System.out.println("------");
     }
 }

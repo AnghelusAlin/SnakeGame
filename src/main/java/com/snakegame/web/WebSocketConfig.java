@@ -1,5 +1,6 @@
 package com.snakegame.web;
 
+import com.snakegame.utils.GameState;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -18,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final Map<String, String> sessions = new ConcurrentHashMap<>();
+
+    GameState gameState = new GameState();
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -40,6 +43,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 String sessionId = message.getHeaders().get("simpSessionId").toString();
                 sessions.put(sessionId, "connected");
                 System.out.println("New session: " + sessionId);
+                gameState.addPlayer("Name","Id",160,90);
+
                 return message;
             }
         });

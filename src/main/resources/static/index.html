@@ -106,6 +106,7 @@
     function connect() {
         var socket = new SockJS('http://192.168.1.131:8080/snake-game');
         stompClient = Stomp.over(socket);
+
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic/gamestate', function (message) {
@@ -118,6 +119,7 @@
             });
         });
     }
+
 
     function confirmName() {
         var name = document.getElementById('inputName').value;

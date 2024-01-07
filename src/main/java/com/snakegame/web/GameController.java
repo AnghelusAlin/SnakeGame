@@ -50,6 +50,7 @@ public class GameController {
         //System.out.println(gameState.serialize());
         counter = 0;
         gameState.updateGameState();
+        gameState.printPlayers();
         gameService.broadcastGameState(gameState.serialize());
         // Process the received movement command and update the game state accordingly
         // Fetch the player, update the position, and generate the new game state

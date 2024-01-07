@@ -166,29 +166,7 @@
 
             // Draw the grid with 16:9 aspect ratio and white squares separated by black lines
             // Sample JSON structure with player positions, names, and colors
-            var sampleData = {
-                "playerData": [
-                    {
-                        "name": "Sopo",
-                        "positions": [{"x": 5, "y": 5}, {"x": 6, "y": 5}, {"x": 7, "y": 5}],
-                        "color": "red"
-                    },
-                    {
-                        "name": "Alun",
-                        "positions": [{"x": 10, "y": 15}, {"x": 10, "y": 16}, {"x": 10, "y": 17}],
-                        "color": "blue"
-                    },
-                    {
-                        "name": "Blud",
-                        "positions": [{"x": 22, "y": 45}, {"x": 22, "y": 46}, {"x": 21, "y": 46}],
-                        "color": "green"
-                    }
-                    // ... more players
-                ]
-            };
-            // Parse the sample JSON data and draw the grid
-            var playerData = sampleData.playerData;
-            drawGrid(playerData);
+
             // Send the name to the server after 100ms            console.log(userName);
             setTimeout(function () {
                 sendName(userName);
@@ -203,8 +181,8 @@
         var canvas = document.getElementById('gridCanvas');
         var context = canvas.getContext('2d');
 
-        var squareSize = 10; // Size of each square
-        var columns = 160; // Number of squares in each row (16:9 aspect ratio)
+        var squareSize = 8; // Adjusted size of each small square
+        var columns = 160; // Number of squares in each row
         var rows = 90; // Number of squares in each column
 
         context.clearRect(0, 0, canvas.width, canvas.height);

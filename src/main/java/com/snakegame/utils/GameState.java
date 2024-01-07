@@ -13,6 +13,12 @@ public class GameState {
     int gridWidth = 160;
     int gridHeight = 90;
 
+    public void printPlayers() {
+        for (Player player : players.values()) {
+            player.printPlayer();
+        }
+    }
+
     public GameState() {
         this.players = new HashMap<>();
     }
@@ -30,8 +36,8 @@ public class GameState {
         player.setPositions(positions);
 
         players.put(name, player);
-        System.out.println("New player added:");
-        player.printPlayer();
+        //System.out.println("New player added:");
+        //player.printPlayer();
     }
     private List<Position> generateRandomPositions(int minX, int minY, int maxX, int maxY) {
         List<Position> randomPositions = new ArrayList<>();

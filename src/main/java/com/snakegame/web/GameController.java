@@ -15,6 +15,9 @@ public class GameController {
 
     private final GameService gameService;
 
+    public GameState gameState = new GameState();
+    public int counter = 0;
+
     @Autowired
     public GameController(GameService gameService) {
         this.gameService = gameService;
@@ -24,8 +27,15 @@ public class GameController {
     public void addPlayer(String payload) {
         // Update game logic...
         // After updating the game state, broadcast it to all players
-        gameService.broadcastGameState(gameStateJson);
+
+
+        JSONObject jsonObject = new JSONObject(payload);
+        String name = jsonObject.getString("content");
+
+        gameState.addPlayer(name, 160, 90);
+
     }
+
     @MessageMapping("/move") // Endpoint to receive movement commands from players
     public void movePlayer(String payload) {
 

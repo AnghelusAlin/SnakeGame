@@ -109,18 +109,19 @@
 
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/gamestate', function (message) {
-                var newData = JSON.parse(message.body);
-                if (newData.hasOwnProperty('playerData')) {
-                    drawGrid(newData.playerData);
-                } else {
-                    console.error('Invalid JSON format. Missing playerData property.');
-                }
-            });
+            stompClient.subscribe('/topic/gamestate',draw );
         });
     }
 
-
+    function draw (message) {
+        console.log("AAAAAAAAAAAAAAA");
+        var newData = JSON.parse(message.body);
+        if (newData.hasOwnProperty('playerData')) {
+            drawGrid(newData.playerData);
+        } else {
+            console.error('Invalid JSON format. Missing playerData property.');
+        }
+    }
     function confirmName() {
         var name = document.getElementById('inputName').value;
         if (name.trim() !== '') {
@@ -138,14 +139,15 @@
             }
             stompClient.connect({}, connectCallback, errorCallback);
             // After connecting, send the user name to the server
-            function onMessage(message){
+            function onMessage(message) {
                 try {
                     // Parse the JSON data received from the server
-                    var newData = JSON.parse(event.data);
+                    var newData = JSON.parse(message.body);
 
                     // Check if the received data has playerData property
                     if (newData.hasOwnProperty('playerData')) {
                         // Update the grid with the new player data
+                        //console.log(newData.playerData);
                         drawGrid(newData.playerData);
                     } else {
                         console.error('Invalid JSON format. Missing playerData property.');
@@ -153,7 +155,8 @@
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
                 }
-            };
+            }
+
             // Hide the name prompt after confirming
             document.getElementById('namePrompt').style.display = 'none';
             // Show the canvas container
@@ -186,7 +189,7 @@
             // Parse the sample JSON data and draw the grid
             var playerData = sampleData.playerData;
             drawGrid(playerData);
-
+            // Send the name to the server after 100ms            console.log(userName);
             setTimeout(function () {
                 sendName(userName);
             }, 1000);

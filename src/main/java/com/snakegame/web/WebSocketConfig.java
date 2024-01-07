@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final Map<String, String> sessions = new ConcurrentHashMap<>();
 
-    GameState gameState = new GameState();
+
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {

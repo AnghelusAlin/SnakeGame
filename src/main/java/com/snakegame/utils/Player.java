@@ -18,7 +18,7 @@ public class Player {
         this.positions = new ArrayList<>();
         this.color = Colors.values()[(int) (Math.random() * Colors.values().length)].toString();
     }
-    public boolean updatePositions(int gridWidth, int gridHeight) {
+    public boolean updatePositions(int gridWidth, int gridHeight, boolean isElongated) {
         // Store the current head position
         Position currentHead = positions.get(0);
         Position newHead = new Position(currentHead.getX(), currentHead.getY());
@@ -44,7 +44,11 @@ public class Player {
             // Move the rest of the positions to form a snake
             List<Position> newPositions = new ArrayList<>();
             newPositions.add(newHead);
-            newPositions.addAll(positions.subList(0, positions.size() - 1));
+            if(isElongated){
+                newPositions.addAll(positions);
+            }
+            else
+                newPositions.addAll(positions.subList(0, positions.size() - 1));
 
             // Update the positions
             positions = newPositions;

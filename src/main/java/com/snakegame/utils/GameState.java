@@ -72,24 +72,29 @@ public class GameState {
             players.put(name, player);
         }
     }
-    public boolean isOpen(Position position) {
+    public boolean isOpen(Position position, String name) {
         // Check if the position is occupied by any player
         for (Player player : players.values()) {
+            if(player.getName().equals(name))
+                continue;
             if (player.getPositions().contains(position)) {
                 return false;
             }
         }
         return true;
     }
-    public void updateGameState() {
+    public void updateGameState(boolean elongate) {
         List<String> playersToRemove = new ArrayList<>();
 
         for (Map.Entry<String, Player> entry : players.entrySet()) {
             Player player = entry.getValue();
 
-            if (player.updatePositions(gridWidth, gridHeight)) {
+            if (player.updatePositions(gridWidth, gridHeight, elongate)) {
                 // Update the positions of the player
-                players.put(player.getName(), player);
+                if(isOpen(player.getPositions().get(0), player.getName()))
+                    players.put(player.getName(), player);
+                else
+                    playersToRemove.add(player.getName());
             } else {
                 // Add the player to the removal list if the position is illegal
                 playersToRemove.add(player.getName());

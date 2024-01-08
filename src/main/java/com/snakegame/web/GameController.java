@@ -1,5 +1,6 @@
 package com.snakegame.web;
 
+import com.snakegame.gamelogic.TickScheduler;
 import com.snakegame.utils.Direction;
 import com.snakegame.utils.GameState;
 import org.json.JSONObject;
@@ -11,15 +12,18 @@ import org.springframework.stereotype.Controller;
 public class GameController {
 
     private final GameService gameService;
-
     public GameState gameState = new GameState();
-    public int counter = 0;
-
+    private TickScheduler scheduler;
     @Autowired
     public GameController(GameService gameService) {
         this.gameService = gameService;
     }
-
+    public GameState getGameState() {
+        return gameState;
+    }
+    public GameService getGameService() {
+        return gameService;
+    }
     @MessageMapping("/snake-game")
     public void addPlayer(String payload) {
         // Update game logic...
@@ -47,12 +51,5 @@ public class GameController {
             default -> Direction.RIGHT;
         };
         gameState.updatePlayerDirection(name, dir);
-        //System.out.println(gameState.serialize());
-        counter = 0;
-        gameState.updateGameState();
-        gameState.printPlayers();
-        gameService.broadcastGameState(gameState.serialize());
-        // Process the received movement command and update the game state accordingly
-        // Fetch the player, update the position, and generate the new game state
     }
 }

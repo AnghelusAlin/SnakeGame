@@ -22,14 +22,15 @@ public class GameState {
     public GameState() {
         this.players = new HashMap<>();
     }
+
     public void addPlayer(String name, int gridWidth, int gridHeight) {
         Player player = new Player(name);
 
         // Add the player to the grid
         int minX = 5;
         int minY = 5;
-        int maxX = gridWidth - 5;
-        int maxY = gridHeight - 5;
+        int maxX = gridWidth - 10;
+        int maxY = gridHeight - 10;
 
         List<Position> positions = generateRandomPositions(minX, minY, maxX, maxY);
 
@@ -51,8 +52,14 @@ public class GameState {
         // Generate two positions below the random position
         Position positionBelow1 = new Position(randomX, randomY + 1);
         Position positionBelow2 = new Position(randomX, randomY + 2);
+        Position positionBelow3 = new Position(randomX, randomY + 3);
+        Position positionBelow4 = new Position(randomX, randomY + 4);
+        Position positionBelow5 = new Position(randomX, randomY + 5);
         randomPositions.add(positionBelow1);
         randomPositions.add(positionBelow2);
+        randomPositions.add(positionBelow3);
+        randomPositions.add(positionBelow4);
+        randomPositions.add(positionBelow5);
 
         return randomPositions;
 

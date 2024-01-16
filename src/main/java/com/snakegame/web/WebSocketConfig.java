@@ -1,7 +1,5 @@
 package com.snakegame.web;
 
-import com.snakegame.utils.GameState;
-import org.json.JSONObject;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -21,21 +19,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final Map<String, String> sessions = new ConcurrentHashMap<>();
 
-
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
     }
-
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/snake-game").withSockJS();
         registry.addEndpoint("/topic/gamestate").withSockJS();
         registry.addEndpoint("/move").withSockJS();
     }
-
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {
@@ -49,7 +43,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             }
         });
     }
-
     @Override
     public void configureClientOutboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {

@@ -1,11 +1,7 @@
 package com.snakegame.gamelogic;
 
-import com.snakegame.utils.GameState;
 import com.snakegame.web.GameController;
-import com.snakegame.web.GameService;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,8 +17,8 @@ public class TickScheduler {
     public TickScheduler(GameController gameController) {
         this.gameController = gameController;
     }
-    // Execute the method every second (1000ms)
-    @Scheduled(fixedRate = 250)
+    // Execute the method every second (125ms)
+    @Scheduled(fixedRate = 125)
     public void tick() {
         elongationCounter++;
         if(elongationCounter >= 20){
@@ -31,7 +27,6 @@ public class TickScheduler {
         }else{
             gameController.getGameState().updateGameState(false);
         }
-
         gameController.getGameState().printPlayers();
         gameController.getGameService().broadcastGameState(gameController.getGameState().serialize());
     }

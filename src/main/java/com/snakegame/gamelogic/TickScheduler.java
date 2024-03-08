@@ -17,8 +17,8 @@ public class TickScheduler {
     public TickScheduler(GameController gameController) {
         this.gameController = gameController;
     }
-    // Execute the method every second (125ms)
-    @Scheduled(fixedRate = 125)
+    // Execute the method every second (50ms)
+    @Scheduled(fixedRate = 50)
     public void tick() {
         elongationCounter++;
         if(elongationCounter >= 20){
